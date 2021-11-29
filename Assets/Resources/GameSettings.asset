@@ -16,7 +16,7 @@ MonoBehaviour:
     walkingMovementSpeed: 5
     runningMovementSpeed: 10
     turnSmoothingTime: 0.1
-    movementSmoothingTime: 0.2
+    movementSmoothingTime: 0.1
     maxJumpHeight: 4
     minJumpHeight: 2
     jumpApexTime: 0.5
