@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Utilities
@@ -19,6 +18,7 @@ namespace Utilities
             private readonly Queue<ExecutionStep> _sequence = new Queue<ExecutionStep>();
 
             private bool _destroyOnFinish = true;
+            private Coroutine _coroutine;
             public bool IsRunning { get; private set; }
 
             private void OnDisable()
@@ -52,7 +52,7 @@ namespace Utilities
 
             public void Run()
             {
-                StartCoroutine(RunCoroutine());
+                _coroutine = StartCoroutine(RunCoroutine());
             }
 
             public CoroutineBuilder WaitForEndOfFrame()
@@ -87,8 +87,11 @@ namespace Utilities
 
             public void Cancel()
             {
-                StopCoroutine(RunCoroutine());
-                IsRunning = false;
+                if (IsRunning)
+                {
+                    StopCoroutine(_coroutine);
+                    IsRunning = false;
+                }
                 if (_destroyOnFinish) Destroy(this);
             }
 
