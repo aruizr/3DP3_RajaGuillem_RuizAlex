@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Utilities.Messaging;
@@ -8,9 +9,15 @@ namespace Input
     [RequireComponent(typeof(PlayerInput))]
     public class InputManager : SingletonMonoBehaviour<InputManager>
     {
+        private void Start()
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
         private void OnMove(InputValue inputValue)
         {
-            EventManager.TriggerEvent("OnPlayerMove", new Message(this)
+            EventManager.TriggerEvent("OnActionMove", new Message(this)
             {
                 {"direction", inputValue.Get<Vector2>()}
             });
@@ -18,7 +25,7 @@ namespace Input
 
         private void OnJump(InputValue inputValue)
         {
-            EventManager.TriggerEvent("OnPlayerJump", new Message(this)
+            EventManager.TriggerEvent("OnActionJump", new Message(this)
             {
                 {"isJumping", inputValue.isPressed}
             });
@@ -26,10 +33,15 @@ namespace Input
         
         private void OnRun(InputValue inputValue)
         {
-            EventManager.TriggerEvent("OnPlayerRun", new Message(this)
+            EventManager.TriggerEvent("OnActionRun", new Message(this)
             {
                 {"isRunning", inputValue.isPressed}
             });
+        }
+        
+        private void OnPunch(InputValue inputValue)
+        {
+            EventManager.TriggerEvent("OnActionPunch");
         }
     }
 }

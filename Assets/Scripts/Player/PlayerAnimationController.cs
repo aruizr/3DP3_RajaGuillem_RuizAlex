@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 using Utilities;
 using Utilities.Messaging;
 
@@ -13,21 +12,29 @@ namespace Player
         private static readonly int OnDoubleJump = Animator.StringToHash("OnDoubleJump");
         private static readonly int OnTripleJump = Animator.StringToHash("OnTripleJump");
         private static readonly int IsGrounded = Animator.StringToHash("isGrounded");
+        private static readonly int OnLongJump = Animator.StringToHash("OnLongJump");
+        private static readonly int OnFirstPunch = Animator.StringToHash("OnFirstPunch");
+        private static readonly int OnSecondPunch = Animator.StringToHash("OnSecondPunch");
+        private static readonly int OnThirdPunch = Animator.StringToHash("OnThirdPunch");
+
+        [SerializeField] [ReadOnly] private int jumpCounter;
+        [SerializeField] [ReadOnly] private int punchCounter;
 
         private Animator _animator;
         private CharacterController _controller;
-        private CoroutineBuilder _counterReset;
-        [SerializeField] [ReadOnly] private int jumpCounter;
-        private float _maxSpeed;
         private bool _isRunning;
-        private static readonly int OnLongJump = Animator.StringToHash("OnLongJump");
+        private CoroutineBuilder _jumpCounterReset;
+        private float _maxSpeed;
+        private CoroutineBuilder _punchCounterReset;
 
         private void Awake()
         {
             Messenger.Send<CharacterController>(controller => _controller = controller);
             Messenger.Send<Animator>(animator => _animator = animator);
             _maxSpeed = GameSettings.Instance.player.runningMovementSpeed;
-            _counterReset = Coroutine().WaitForSeconds(GameSettings.Instance.player.jumpComboResetTime)
+            _jumpCounterReset = Coroutine().WaitForSeconds(GameSettings.Instance.player.jumpComboResetTime)
+                .Invoke(() => jumpCounter = 0).DestroyOnFinish(false);
+            _punchCounterReset = Coroutine().WaitForSeconds(GameSettings.Instance.player.punchComboResetTime)
                 .Invoke(() => jumpCounter = 0).DestroyOnFinish(false);
         }
 
@@ -43,19 +50,45 @@ namespace Player
         private void OnEnable()
         {
             EventManager.StartListening("OnPlayerJump", OnPlayerJump);
-            EventManager.StartListening("OnPlayerRun", OnPlayerRun);
+            EventManager.StartListening("OnPlayerWallJump", OnPlayerWallJump);
+            EventManager.StartListening("OnActionRun", OnActionRun);
+            EventManager.StartListening("OnPlayerPunch", OnPlayerPunch);
         }
 
-        private void OnPlayerRun(Message message)
+        private void OnPlayerPunch(Message message)
+        {
+            switch (punchCounter)
+            {
+                case 0:
+                    _animator.SetTrigger(OnFirstPunch);
+                    break;
+                case 1:
+                    _animator.SetTrigger(OnSecondPunch);
+                    break;
+                case 2:
+                    _animator.SetTrigger(OnThirdPunch);
+                    break;
+            }
+
+            punchCounter++;
+            if (punchCounter > 2) punchCounter = 0;
+
+            _punchCounterReset.Cancel();
+            _punchCounterReset.Run();
+        }
+
+        private void OnPlayerWallJump(Message message)
+        {
+            _animator.SetTrigger(OnLongJump);
+        }
+
+        private void OnActionRun(Message message)
         {
             _isRunning = (bool) message["isRunning"];
         }
 
         private void OnPlayerJump(Message message)
         {
-            var isJumping = (bool) message["isJumping"];
-            if (!isJumping) return;
-
             if (_isRunning)
             {
                 _animator.SetTrigger(OnLongJump);
@@ -78,9 +111,9 @@ namespace Player
 
             jumpCounter++;
             if (jumpCounter > 2) jumpCounter = 0;
-            
-            _counterReset.Cancel();
-            _counterReset.Run();
+
+            _jumpCounterReset.Cancel();
+            _jumpCounterReset.Run();
         }
     }
 }

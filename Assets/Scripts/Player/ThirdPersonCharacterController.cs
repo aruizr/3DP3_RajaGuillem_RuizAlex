@@ -1,11 +1,16 @@
+using System;
 using UnityEngine;
+using Utilities;
 using Utilities.Messaging;
+using Utilities.Physics;
 
 namespace Player
 {
     [RequireComponent(typeof(CharacterController))]
-    public class ThirdPersonCharacterController : MonoBehaviour
+    public class ThirdPersonCharacterController : ExtendedMonoBehaviour
     {
+        [SerializeField] private RayCaster wallDetector;
+        [SerializeField] private RayCaster groundDetector;
         private Transform _camera;
         private CharacterController _controller;
         private float _currentAngle;
@@ -13,9 +18,11 @@ namespace Player
         private Vector2 _direction;
         private float _gravity;
         private bool _isJumping;
+        private bool _isPunching;
         private bool _isRunning;
         private float _maxJumpVelocity;
         private float _minJumpVelocity;
+        private CoroutineBuilder _punchCoroutine;
         private float _turningSmoothingTime;
         private Vector3 _velocity;
         private float _verticalVelocity;
@@ -31,13 +38,37 @@ namespace Player
             _gravity = 2 * maxJumpHeight / (jumpApexTime * jumpApexTime);
             _maxJumpVelocity = 2 * maxJumpHeight / jumpApexTime;
             _minJumpVelocity = 2 * minJumpHeight / jumpApexTime;
+            _punchCoroutine = Coroutine().Invoke(() => _isPunching = true).WaitForSeconds(0.3f)
+                .Invoke(() => _isPunching = false).DestroyOnFinish(false);
+        }
+
+        private void Update()
+        {
+            if (_isPunching) return;
+            _controller.Move(_velocity * Time.deltaTime);
         }
 
         private void FixedUpdate()
         {
-            _verticalVelocity = _controller.isGrounded switch
+            var isGrounded = _controller.isGrounded;
+
+            if (!isGrounded && wallDetector.IsColliding && _isJumping)
             {
-                true when _isJumping => _maxJumpVelocity,
+                transform.Rotate(0, 180, 0);
+                _velocity = transform.forward * GameSettings.Instance.player.runningMovementSpeed * 2;
+                _verticalVelocity = _maxJumpVelocity;
+                _velocity.y = _verticalVelocity;
+                EventManager.TriggerEvent("OnPlayerWallJump");
+                return;
+            }
+
+            _verticalVelocity = isGrounded switch
+            {
+                true when _isJumping => ((Func<float>) (() =>
+                {
+                    EventManager.TriggerEvent("OnPlayerJump");
+                    return _maxJumpVelocity;
+                }))(),
                 true => 0f,
                 false when !_isJumping && _verticalVelocity > _minJumpVelocity => _minJumpVelocity,
                 false => _verticalVelocity - _gravity * Time.fixedDeltaTime
@@ -48,7 +79,6 @@ namespace Player
                 _velocity = Vector3.SmoothDamp(_velocity, Vector3.zero, ref _currentVelocity,
                     GameSettings.Instance.player.movementSmoothingTime);
                 _velocity.y = _verticalVelocity;
-                _controller.Move(_velocity * Time.fixedDeltaTime);
                 return;
             }
 
@@ -66,34 +96,44 @@ namespace Player
                 GameSettings.Instance.player.movementSmoothingTime);
 
             _velocity.y = _verticalVelocity;
-            _controller.Move(_velocity * Time.fixedDeltaTime);
         }
 
         private void OnEnable()
         {
-            EventManager.StartListening("OnPlayerMove", OnPlayerMove);
-            EventManager.StartListening("OnPlayerRun", OnPlayerRun);
-            EventManager.StartListening("OnPlayerJump", OnPlayerJump);
+            EventManager.StartListening("OnActionMove", OnActionMove);
+            EventManager.StartListening("OnActionRun", OnActionRun);
+            EventManager.StartListening("OnActionJump", OnActionJump);
+            EventManager.StartListening("OnActionPunch", OnActionPunch);
         }
 
         private void OnDisable()
         {
-            EventManager.StopListening("OnPlayerMove", OnPlayerMove);
-            EventManager.StopListening("OnPlayerRun", OnPlayerRun);
-            EventManager.StopListening("OnPlayerJump", OnPlayerJump);
+            EventManager.StopListening("OnActionMove", OnActionMove);
+            EventManager.StopListening("OnActionRun", OnActionRun);
+            EventManager.StopListening("OnActionJump", OnActionJump);
+            EventManager.StopListening("OnActionPunch", OnActionPunch);
         }
 
-        private void OnPlayerMove(Message message)
+        private void OnActionPunch(Message message)
+        {
+            if (_punchCoroutine.IsRunning) return;
+            if (!groundDetector.IsColliding) return;
+            if (_isRunning) return;
+            EventManager.TriggerEvent("OnPlayerPunch");
+            _punchCoroutine.Run();
+        }
+
+        private void OnActionMove(Message message)
         {
             _direction = (Vector2) message["direction"];
         }
 
-        private void OnPlayerRun(Message message)
+        private void OnActionRun(Message message)
         {
             _isRunning = (bool) message["isRunning"];
         }
 
-        private void OnPlayerJump(Message message)
+        private void OnActionJump(Message message)
         {
             _isJumping = (bool) message["isJumping"];
         }

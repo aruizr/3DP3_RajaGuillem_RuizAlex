@@ -18,5 +18,6 @@ public class GameSettings : SingletonScriptableObject<GameSettings>
         public float minJumpHeight;
         public float jumpApexTime;
         public float jumpComboResetTime;
+        public float punchComboResetTime;
     }
 }
