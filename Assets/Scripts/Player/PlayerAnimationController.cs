@@ -1,6 +1,7 @@
 using UnityEngine;
 using Utilities;
 using Utilities.Messaging;
+using Utilities.Physics;
 
 namespace Player
 {
@@ -16,7 +17,9 @@ namespace Player
         private static readonly int OnFirstPunch = Animator.StringToHash("OnFirstPunch");
         private static readonly int OnSecondPunch = Animator.StringToHash("OnSecondPunch");
         private static readonly int OnThirdPunch = Animator.StringToHash("OnThirdPunch");
+        private static readonly int OnWallJump = Animator.StringToHash("OnWallJump");
 
+        [SerializeField] private RayCaster groundDetector;
         [SerializeField] [ReadOnly] private int jumpCounter;
         [SerializeField] [ReadOnly] private int punchCounter;
 
@@ -44,7 +47,7 @@ namespace Player
             var horizontalSpeed = new Vector2(velocity.x, velocity.z).magnitude;
             _animator.SetFloat(HorizontalSpeed, horizontalSpeed / _maxSpeed);
             _animator.SetFloat(VerticalSpeed, velocity.y);
-            _animator.SetBool(IsGrounded, _controller.isGrounded);
+            _animator.SetBool(IsGrounded, groundDetector.IsColliding);
         }
 
         private void OnEnable()
