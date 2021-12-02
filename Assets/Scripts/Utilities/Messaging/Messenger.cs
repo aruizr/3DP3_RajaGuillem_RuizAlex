@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using UnityEngine;
 using Utilities.Singleton;
@@ -12,7 +11,7 @@ namespace Utilities.Messaging
         {
             if (target)
             {
-                var component = target.GetComponent<T>();
+                var component = target.GetComponentInChildren<T>();
                 if (component != null) callback?.Invoke(component);
             }
             else
@@ -22,9 +21,9 @@ namespace Utilities.Messaging
             }
         }
 
-        public static async void SendAsync<T>(Action<T> callback, GameObject target = null)
+        public static void SendAsync<T>(Action<T> callback, GameObject target = null)
         {
-            await Task.Run(() => Send(callback, target));
+            Instance.Coroutine().Invoke(() => Send(callback, target)).Run();
         }
 
         public static TV Request<T, TV>([NotNull] Func<T, TV> getter, [NotNull] GameObject target)

@@ -38,8 +38,10 @@ namespace Player
             _gravity = 2 * maxJumpHeight / (jumpApexTime * jumpApexTime);
             _maxJumpVelocity = 2 * maxJumpHeight / jumpApexTime;
             _minJumpVelocity = 2 * minJumpHeight / jumpApexTime;
-            _punchCoroutine = Coroutine().Invoke(() => _isPunching = true).WaitForSeconds(0.3f)
-                .Invoke(() => _isPunching = false).DestroyOnFinish(false);
+            _punchCoroutine = Coroutine(destroyOnFinish: false).
+                Invoke(() => _isPunching = true).
+                WaitForSeconds(0.3f).
+                Invoke(() => _isPunching = false);
         }
 
         private void Update()

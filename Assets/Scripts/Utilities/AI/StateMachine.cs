@@ -20,6 +20,7 @@ namespace Utilities
 
         public StateMachine()
         {
+            _currentState = default(T);
             _isLocked = false;
             _actions = new Dictionary<T, Dictionary<StatePhase, UnityAction>>();
             foreach (T state in Enum.GetValues(typeof(T)))

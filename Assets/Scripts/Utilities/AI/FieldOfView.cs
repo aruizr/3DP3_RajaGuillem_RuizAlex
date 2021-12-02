@@ -19,18 +19,15 @@ public class FieldOfView : ExtendedMonoBehaviour
 
     private void Awake()
     {
-        _scanCoroutine = Coroutine().Invoke(ScanVisibleTargets).WaitForSeconds(1 / targetScanRate).While(() => true)
-            .DestroyOnFinish(false);
+        _scanCoroutine = Coroutine(cancelOnDisable: true, destroyOnFinish: false).
+            Invoke(ScanVisibleTargets).
+            WaitForSeconds(1 / targetScanRate).
+            While(() => true);
     }
 
     private void OnEnable()
     {
         _scanCoroutine.Run();
-    }
-
-    private void OnDisable()
-    {
-        _scanCoroutine.Cancel();
     }
 
     private void ScanVisibleTargets()

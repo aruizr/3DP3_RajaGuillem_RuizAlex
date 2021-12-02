@@ -32,13 +32,15 @@ namespace Player
 
         private void Awake()
         {
-            Messenger.Send<CharacterController>(controller => _controller = controller);
-            Messenger.Send<Animator>(animator => _animator = animator);
+            Messenger.Send<CharacterController>(controller => _controller = controller, gameObject);
+            Messenger.Send<Animator>(animator => _animator = animator, gameObject);
             _maxSpeed = GameSettings.Instance.player.runningMovementSpeed;
-            _jumpCounterReset = Coroutine().WaitForSeconds(GameSettings.Instance.player.jumpComboResetTime)
-                .Invoke(() => jumpCounter = 0).DestroyOnFinish(false);
-            _punchCounterReset = Coroutine().WaitForSeconds(GameSettings.Instance.player.punchComboResetTime)
-                .Invoke(() => jumpCounter = 0).DestroyOnFinish(false);
+            _jumpCounterReset = Coroutine(destroyOnFinish: false).
+                WaitForSeconds(GameSettings.Instance.player.jumpComboResetTime).
+                Invoke(() => jumpCounter = 0);
+            _punchCounterReset = Coroutine(destroyOnFinish: false).
+                WaitForSeconds(GameSettings.Instance.player.punchComboResetTime).
+                Invoke(() => jumpCounter = 0);
         }
 
         private void FixedUpdate()

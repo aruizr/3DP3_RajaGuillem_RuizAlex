@@ -19,16 +19,41 @@ namespace Enemies.Goomba
         private NavMeshAgent _agent;
         private Animator _animator;
         private Vector3 _currentDestination;
+        private CoroutineBuilder _destinationCoroutine;
         private FieldOfView _fov;
+        private CoroutineBuilder _onTakeDamageCoroutine;
         private Transform _player;
+        private Rigidbody _rigidbody;
         private StateMachine<States> _stateMachine;
+
+        private void Start()
+        {
+            _stateMachine = InitStateMachine();
+            _stateMachine.CurrentState = States.Patrol;
+        }
+
+        private void Update()
+        {
+            _stateMachine.Update();
+        }
 
         protected override void OnInit()
         {
             _agent = GetComponent<NavMeshAgent>();
-            _stateMachine = InitStateMachine();
+            _rigidbody = GetComponent<Rigidbody>();
             _fov = GetComponentInChildren<FieldOfView>();
             _animator = GetComponentInChildren<Animator>();
+            _destinationCoroutine = Coroutine(false).WaitForSeconds(Random.Range(5, 10)).Invoke(SetRandomDestination);
+        }
+
+        protected override void OnTakeDamage()
+        {
+            ChangeState(States.Hit);
+        }
+
+        protected override void OnDie()
+        {
+            Destroy(gameObject);
         }
 
         private StateMachine<States> InitStateMachine()
@@ -44,14 +69,31 @@ namespace Enemies.Goomba
             {
                 OnStayState(() =>
                 {
-                    if (HasReachedDestination()) SetRandomDestination();
+                    if (HasReachedDestination())
+                    {
+                        _destinationCoroutine.Cancel();
+                        _destinationCoroutine.Run();
+                        SetRandomDestination();
+                    }
                 });
             });
+            sm.OnStatePhase(States.Patrol, StatePhase.Exit, () => _destinationCoroutine.Cancel());
+
             sm.OnStatePhase(States.Chase, StatePhase.Enter, () => _animator.SetTrigger(OnChase));
             sm.OnStatePhase(States.Chase, StatePhase.Stay,
-                () => OnStayState(() => _agent.SetDestination(_player.position)));
+                () => OnStayState(() => { _agent.SetDestination(_player.position); }));
 
-            sm.CurrentState = States.Patrol;
+            sm.OnStatePhase(States.Hit, StatePhase.Enter, () =>
+            {
+                _agent.enabled = false;
+                _rigidbody.isKinematic = false;
+                Coroutine().WaitForSeconds(2).Invoke(() => ChangeState(States.Patrol)).Run();
+            });
+            sm.OnStatePhase(States.Hit, StatePhase.Exit, () =>
+            {
+                _agent.enabled = true;
+                _rigidbody.isKinematic = true;
+            });
 
             return sm;
         }
@@ -93,8 +135,10 @@ namespace Enemies.Goomba
 
         private enum States
         {
+            Idle,
             Patrol,
-            Chase
+            Chase,
+            Hit
         }
     }
 }

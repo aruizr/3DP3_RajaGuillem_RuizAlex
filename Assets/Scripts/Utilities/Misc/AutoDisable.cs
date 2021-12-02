@@ -10,7 +10,7 @@ namespace Utilities.Misc
 
         private void OnEnable()
         {
-            _coroutine ??= Coroutine().WaitForSeconds(delay).Invoke(() => gameObject.SetActive(false));
+            _coroutine ??= Coroutine(destroyOnFinish: false).WaitForSeconds(delay).Invoke(() => gameObject.SetActive(false));
             _coroutine.Run();
         }
 

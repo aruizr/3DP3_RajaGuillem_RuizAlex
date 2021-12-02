@@ -1,4 +1,5 @@
-﻿using MyBox;
+﻿using System;
+using MyBox;
 using UnityEngine;
 
 namespace Utilities.Physics
@@ -21,8 +22,23 @@ namespace Utilities.Physics
         {
             var t = transform;
             var ray = new Ray(t.position, t.forward);
-            isColliding = UnityEngine.Physics.Raycast(ray, out var hit, hasDistance ? distance : Mathf.Infinity, detectLayers);
-            CurrentHit = hit;
+            var result = UnityEngine.Physics.Raycast(ray, out var hit, hasDistance ? distance : Mathf.Infinity,
+                detectLayers);
+
+            if (!isColliding && result)
+            {
+                isColliding = true;
+                CurrentHit = hit;
+                OnHitEnter?.Invoke(CurrentHit);
+            }
+
+            if (isColliding && !result)
+            {
+                var currentHit = CurrentHit;
+                CurrentHit = hit;
+                isColliding = false;
+                OnHitExit?.Invoke(currentHit);
+            }
         }
 
         private void OnDrawGizmosSelected()
@@ -32,5 +48,8 @@ namespace Utilities.Physics
             Gizmos.color = rayColor;
             Gizmos.DrawLine(position, position + t.forward * (hasDistance ? distance : 1000));
         }
+
+        public event Action<RaycastHit> OnHitEnter;
+        public event Action<RaycastHit> OnHitExit;
     }
 }
