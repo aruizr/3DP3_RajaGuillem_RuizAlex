@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
+using Utilities.Attributes;
 
 namespace Utilities.Health
 {
@@ -6,16 +8,16 @@ namespace Utilities.Health
     {
         [SerializeField] private float health;
 
-        private float _currentHealth;
+        [SerializeField] [ReadOnly] private float currentHealth;
 
         public float MaxHealth => health;
 
         public float CurrentHealth
         {
-            get => _currentHealth;
+            get => currentHealth;
             protected set
             {
-                _currentHealth = value < 0 ? 0 : value;
+                currentHealth = value < 0 ? 0 : value;
                 OnUpdateHealth();
             }
         }

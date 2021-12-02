@@ -54,7 +54,7 @@ namespace Enemies.Goomba
 
         protected override void OnDie()
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
 
         private StateMachine<States> InitStateMachine()

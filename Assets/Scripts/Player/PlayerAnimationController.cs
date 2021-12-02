@@ -30,6 +30,7 @@ namespace Player
         private CoroutineBuilder _jumpCounterReset;
         private float _maxSpeed;
         private CoroutineBuilder _punchCounterReset;
+        private CoroutineBuilder _specialIdle;
 
         private void Awake()
         {
@@ -42,12 +43,17 @@ namespace Player
             _punchCounterReset = Coroutine(destroyOnFinish: false).
                 WaitForSeconds(GameSettings.Instance.player.punchComboResetTime).
                 Invoke(() => jumpCounter = 0);
+            _specialIdle = Coroutine(destroyOnFinish: false).
+                WaitForSeconds(10)
+                .Invoke(() => _animator.SetTrigger(OnThirdPunch));
         }
 
         private void FixedUpdate()
         {
             var velocity = _controller.velocity;
             var horizontalSpeed = new Vector2(velocity.x, velocity.z).magnitude;
+            if (horizontalSpeed < 0.1f && !_specialIdle.IsRunning) _specialIdle.Run();
+            else if (horizontalSpeed >= 0.1f && _specialIdle.IsRunning) _specialIdle.Cancel();
             _animator.SetFloat(HorizontalSpeed, horizontalSpeed / _maxSpeed);
             _animator.SetFloat(VerticalSpeed, velocity.y);
             _animator.SetBool(IsGrounded, groundDetector.IsColliding);

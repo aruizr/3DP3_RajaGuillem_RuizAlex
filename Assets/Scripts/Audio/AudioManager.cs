@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Codetox.Runtime.Pooling;
+using MyBox;
 using UnityEngine;
 using Utilities.Messaging;
 using Utilities.Misc;
@@ -35,6 +36,10 @@ namespace Audio
                     audioSource.volume = sound.volume;
                     audioSource.loop = sound.loop;
                     audioSource.clip = sound.audioClip;
+                    audioSource.spatialBlend = sound.is3D ? 1 : 0;
+                    audioSource.minDistance = sound.distance.min;
+                    audioSource.maxDistance = sound.distance.max;
+                    
                     audioSourceTransform.position = source.position;
                     audioSourceTransform.parent = source;
 

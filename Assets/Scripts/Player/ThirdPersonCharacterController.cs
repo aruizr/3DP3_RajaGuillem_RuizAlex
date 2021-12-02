@@ -39,7 +39,11 @@ namespace Player
             _maxJumpVelocity = 2 * maxJumpHeight / jumpApexTime;
             _minJumpVelocity = 2 * minJumpHeight / jumpApexTime;
             _punchCoroutine = Coroutine(destroyOnFinish: false).
-                Invoke(() => _isPunching = true).
+                Invoke(() =>
+                {
+                    _isPunching = true;
+                    EventManager.TriggerEvent("OnPlayerPunch", new Message(this));
+                }).
                 WaitForSeconds(0.3f).
                 Invoke(() => _isPunching = false);
         }
@@ -118,10 +122,9 @@ namespace Player
 
         private void OnActionPunch(Message message)
         {
-            if (_punchCoroutine.IsRunning) return;
+            if (_isPunching) return;
             if (!groundDetector.IsColliding) return;
             if (_isRunning) return;
-            EventManager.TriggerEvent("OnPlayerPunch", new Message(this));
             _punchCoroutine.Run();
         }
 
