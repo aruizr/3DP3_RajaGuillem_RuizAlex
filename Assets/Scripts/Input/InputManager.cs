@@ -41,7 +41,7 @@ namespace Input
         
         private void OnPunch(InputValue inputValue)
         {
-            EventManager.TriggerEvent("OnActionPunch");
+            EventManager.TriggerEvent("OnActionPunch", new Message(this));
         }
     }
 }

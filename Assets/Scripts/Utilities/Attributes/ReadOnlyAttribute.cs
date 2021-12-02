@@ -1,4 +1,12 @@
 ﻿using UnityEngine;
+using Utilities.Attributes;
+
+namespace Utilities.Attributes
+{
+    public class ReadOnlyAttribute : PropertyAttribute
+    {
+    }
+}
 
 namespace UnityEditor
 {

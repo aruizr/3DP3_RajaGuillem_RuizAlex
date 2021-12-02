@@ -13,7 +13,7 @@ namespace Utilities.Physics
         private float distance;
 
         [SerializeField] private Color rayColor = Color.white;
-        [SerializeField] [ReadOnly] private bool isColliding;
+        [SerializeField] [Attributes.ReadOnly] private bool isColliding;
 
         public bool IsColliding => isColliding;
         public RaycastHit CurrentHit { get; private set; }

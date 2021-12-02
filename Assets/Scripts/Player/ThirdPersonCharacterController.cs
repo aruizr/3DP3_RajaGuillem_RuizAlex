@@ -60,7 +60,7 @@ namespace Player
                 _velocity = transform.forward * GameSettings.Instance.player.runningMovementSpeed * 2;
                 _verticalVelocity = _maxJumpVelocity;
                 _velocity.y = _verticalVelocity;
-                EventManager.TriggerEvent("OnPlayerWallJump");
+                EventManager.TriggerEvent("OnPlayerWallJump", new Message(this));
                 return;
             }
 
@@ -68,7 +68,7 @@ namespace Player
             {
                 true when _isJumping => ((Func<float>) (() =>
                 {
-                    EventManager.TriggerEvent("OnPlayerJump");
+                    EventManager.TriggerEvent("OnPlayerJump", new Message(this));
                     return _maxJumpVelocity;
                 }))(),
                 true => 0f,
@@ -121,7 +121,7 @@ namespace Player
             if (_punchCoroutine.IsRunning) return;
             if (!groundDetector.IsColliding) return;
             if (_isRunning) return;
-            EventManager.TriggerEvent("OnPlayerPunch");
+            EventManager.TriggerEvent("OnPlayerPunch", new Message(this));
             _punchCoroutine.Run();
         }
 

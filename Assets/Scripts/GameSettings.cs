@@ -1,11 +1,14 @@
 using System;
+using Audio;
 using UnityEngine;
+using Utilities.Misc;
 using Utilities.Singleton;
 
 [CreateAssetMenu(fileName = "GameSettings", menuName = "Scriptable Objects/Game Settings")]
 public class GameSettings : SingletonScriptableObject<GameSettings>
 {
     public PlayerSettings player;
+    public SerializableDictionary<string, Sound> sounds;
 
     [Serializable]
     public struct PlayerSettings

@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using Utilities;
+using Utilities.Attributes;
 using Utilities.Health;
 using Random = UnityEngine.Random;
 

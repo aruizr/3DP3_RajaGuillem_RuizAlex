@@ -1,5 +1,6 @@
 using UnityEngine;
 using Utilities;
+using Utilities.Attributes;
 using Utilities.Messaging;
 using Utilities.Physics;
 
@@ -66,12 +67,15 @@ namespace Player
             {
                 case 0:
                     _animator.SetTrigger(OnFirstPunch);
+                    EventManager.TriggerEvent("OnFirstPunch", new Message(this));
                     break;
                 case 1:
                     _animator.SetTrigger(OnSecondPunch);
+                    EventManager.TriggerEvent("OnSecondPunch", new Message(this));
                     break;
                 case 2:
                     _animator.SetTrigger(OnThirdPunch);
+                    EventManager.TriggerEvent("OnThirdPunch", new Message(this));
                     break;
             }
 
@@ -85,6 +89,7 @@ namespace Player
         private void OnPlayerWallJump(Message message)
         {
             _animator.SetTrigger(OnLongJump);
+            EventManager.TriggerEvent("OnLongJump", new Message(this));
         }
 
         private void OnActionRun(Message message)
@@ -97,6 +102,7 @@ namespace Player
             if (_isRunning)
             {
                 _animator.SetTrigger(OnLongJump);
+                EventManager.TriggerEvent("OnLongJump", new Message(this));
                 jumpCounter = 0;
                 return;
             }
@@ -105,12 +111,15 @@ namespace Player
             {
                 case 0:
                     _animator.SetTrigger(OnJump);
+                    EventManager.TriggerEvent("OnJump", new Message(this));
                     break;
                 case 1:
                     _animator.SetTrigger(OnDoubleJump);
+                    EventManager.TriggerEvent("OnDoubleJump", new Message(this));
                     break;
                 case 2:
                     _animator.SetTrigger(OnTripleJump);
+                    EventManager.TriggerEvent("OnTripleJump", new Message(this));
                     break;
             }
 

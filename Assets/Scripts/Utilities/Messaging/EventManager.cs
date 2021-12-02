@@ -8,7 +8,7 @@ namespace Utilities.Messaging
 {
     public class EventManager : SingletonMonoBehaviour<EventManager>
     {
-        public delegate void EventListener(Message message = null);
+        public delegate void EventListener(Message message);
 
         private EventDictionary _events;
 
@@ -42,7 +42,7 @@ namespace Utilities.Messaging
             Instance._events[eventName] = @event;
         }
 
-        public static void TriggerEvent([NotNull] string eventName, Message message = null)
+        public static void TriggerEvent([NotNull] string eventName, Message message)
         {
             if (eventName == null) throw new ArgumentNullException(nameof(eventName));
             if (!Instance) return;
@@ -50,7 +50,7 @@ namespace Utilities.Messaging
             @event?.Invoke(message);
         }
 
-        public static async void TriggerEventAsync([NotNull] string eventName, Message message = null)
+        public static async void TriggerEventAsync([NotNull] string eventName, Message message)
         {
             if (eventName == null) throw new ArgumentNullException(nameof(eventName));
             await Task.Run(() => TriggerEvent(eventName, message));
