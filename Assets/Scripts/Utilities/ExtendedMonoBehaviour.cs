@@ -2,28 +2,56 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Utilities
 {
     public class ExtendedMonoBehaviour : MonoBehaviour
     {
-        protected CoroutineBuilder Coroutine()
+        protected Vector3 DirectionTo(Vector3 point)
         {
-            return gameObject.AddComponent<CoroutineBuilder>();
+            return (point - transform.position).normalized;
+        }
+        
+        protected Vector3 DirectionFrom(Vector3 point)
+        {
+            return (transform.position - point).normalized;
+        }
+        
+        protected Vector3 VectorTo(Vector3 point)
+        {
+            return point - transform.position;
+        }
+        
+        protected Vector3 VectorFrom(Vector3 point)
+        {
+            return transform.position - point;
+        }
+
+        protected float DistanceTo(Vector3 point)
+        {
+            return (point - transform.position).magnitude;
+        }
+        
+        protected CoroutineBuilder Coroutine(bool destroyOnFinish = true, bool cancelOnDisable = true)
+        {
+            return gameObject.AddComponent<CoroutineBuilder>().
+                DestroyOnFinish(destroyOnFinish).
+                CancelOnDisable(cancelOnDisable);
         }
 
         protected class CoroutineBuilder : MonoBehaviour
         {
             private readonly Queue<ExecutionStep> _sequence = new Queue<ExecutionStep>();
 
-            private bool _destroyOnFinish = true;
+            private bool _destroyOnFinish;
+            private bool _cancelOnDisable;
+            private Coroutine _coroutine;
             public bool IsRunning { get; private set; }
 
             private void OnDisable()
             {
-                Cancel();
+                if (_cancelOnDisable) Cancel();
             }
 
             public CoroutineBuilder Invoke(Action action)
@@ -52,7 +80,7 @@ namespace Utilities
 
             public void Run()
             {
-                StartCoroutine(RunCoroutine());
+                _coroutine = StartCoroutine(RunCoroutine());
             }
 
             public CoroutineBuilder WaitForEndOfFrame()
@@ -85,10 +113,19 @@ namespace Utilities
                 return this;
             }
 
+            public CoroutineBuilder CancelOnDisable(bool condition = true)
+            {
+                _cancelOnDisable = condition;
+                return this;
+            }
+
             public void Cancel()
             {
-                StopCoroutine(RunCoroutine());
-                IsRunning = false;
+                if (IsRunning)
+                {
+                    StopCoroutine(_coroutine);
+                    IsRunning = false;
+                }
                 if (_destroyOnFinish) Destroy(this);
             }
 

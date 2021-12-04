@@ -13,10 +13,49 @@ MonoBehaviour:
   m_Name: GameSettings
   m_EditorClassIdentifier: 
   player:
-    walkingMovementSpeed: 5
-    runningMovementSpeed: 10
+    walkingMovementSpeed: 8
+    runningMovementSpeed: 16
     turnSmoothingTime: 0.1
     movementSmoothingTime: 0.1
     maxJumpHeight: 4
     minJumpHeight: 2
     jumpApexTime: 0.5
+    jumpComboResetTime: 2
+    punchComboResetTime: 0
+  sounds:
+    dictionary:
+    - key: OnFirstPunch
+      value:
+        audioClip: {fileID: 8300000, guid: 4cfb898b1747e874ab8d5f6b7848fbd1, type: 3}
+        volume: 100
+        loop: 0
+    - key: OnSecondPunch
+      value:
+        audioClip: {fileID: 8300000, guid: 44e22145751055b499c4f33ff2b8c077, type: 3}
+        volume: 100
+        loop: 0
+    - key: OnThirdPunch
+      value:
+        audioClip: {fileID: 8300000, guid: ea0fe4f3d19e75b4bb61663437376503, type: 3}
+        volume: 100
+        loop: 0
+    - key: OnJump
+      value:
+        audioClip: {fileID: 8300000, guid: 722fc094445f9be4b877763b45f06675, type: 3}
+        volume: 100
+        loop: 0
+    - key: OnDoubleJump
+      value:
+        audioClip: {fileID: 8300000, guid: ecb4e80b01b89aa4f8459a0935f16341, type: 3}
+        volume: 100
+        loop: 0
+    - key: OnTripleJump
+      value:
+        audioClip: {fileID: 8300000, guid: 7ccbf0c43325cc645a395bdf4c26e41e, type: 3}
+        volume: 100
+        loop: 0
+    - key: OnLongJump
+      value:
+        audioClip: {fileID: 8300000, guid: dd312ecb1ec0f214fbacac5cf06c32f4, type: 3}
+        volume: 100
+        loop: 0

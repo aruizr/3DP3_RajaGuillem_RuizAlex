@@ -1,5 +1,7 @@
 using System;
+using Audio;
 using UnityEngine;
+using Utilities.Misc;
 using Utilities.Singleton;
 
 [CreateAssetMenu(fileName = "GameSettings", menuName = "Scriptable Objects/Game Settings")]
@@ -17,5 +19,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings>
         public float maxJumpHeight;
         public float minJumpHeight;
         public float jumpApexTime;
+        public float jumpComboResetTime;
+        public float punchComboResetTime;
     }
 }
