@@ -17,6 +17,8 @@ namespace Player
         private Vector3 _currentVelocity;
         private Vector2 _direction;
         private float _gravity;
+        private CoroutineBuilder _hitCoroutine;
+        private bool _isHit;
         private bool _isJumping;
         private bool _isPunching;
         private bool _isRunning;
@@ -26,6 +28,7 @@ namespace Player
         private float _turningSmoothingTime;
         private Vector3 _velocity;
         private float _verticalVelocity;
+        private bool _isDead;
 
         private void Awake()
         {
@@ -38,14 +41,13 @@ namespace Player
             _gravity = 2 * maxJumpHeight / (jumpApexTime * jumpApexTime);
             _maxJumpVelocity = 2 * maxJumpHeight / jumpApexTime;
             _minJumpVelocity = 2 * minJumpHeight / jumpApexTime;
-            _punchCoroutine = Coroutine(destroyOnFinish: false).
-                Invoke(() =>
-                {
-                    _isPunching = true;
-                    EventManager.TriggerEvent("OnPlayerPunch", new Message(this));
-                }).
-                WaitForSeconds(0.3f).
-                Invoke(() => _isPunching = false);
+            _punchCoroutine = Coroutine(false).Invoke(() =>
+            {
+                _isPunching = true;
+                EventManager.TriggerEvent("OnPlayerPunch", new Message(this));
+            }).WaitForSeconds(0.3f).Invoke(() => _isPunching = false);
+            _hitCoroutine = Coroutine(false).Invoke(() => _isHit = true).WaitForSeconds(0.3f)
+                .Invoke(() => _isHit = false);
         }
 
         private void Update()

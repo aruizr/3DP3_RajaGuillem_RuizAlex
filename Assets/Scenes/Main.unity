@@ -244,6 +244,15 @@ MonoBehaviour:
         distance:
           min: 25
           max: 75
+    - key: OnPlayerHit
+      value:
+        audioClip: {fileID: 8300000, guid: 3c9390658e11ee84498a5ea56246c717, type: 3}
+        volume: 100
+        loop: 0
+        is3D: 0
+        distance:
+          min: 25
+          max: 75
 --- !u!4 &126521335
 Transform:
   m_ObjectHideFlags: 0

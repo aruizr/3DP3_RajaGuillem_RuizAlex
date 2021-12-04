@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using Utilities;
+using Utilities.AI;
 using Utilities.Attributes;
 using Utilities.Health;
 using Random = UnityEngine.Random;
@@ -21,7 +22,7 @@ namespace Enemies.Goomba
         private Animator _animator;
         private Vector3 _currentDestination;
         private CoroutineBuilder _destinationCoroutine;
-        private FieldOfView _fov;
+        private AreaDetector _fov;
         private CoroutineBuilder _onTakeDamageCoroutine;
         private Transform _player;
         private Rigidbody _rigidbody;
@@ -42,7 +43,7 @@ namespace Enemies.Goomba
         {
             _agent = GetComponent<NavMeshAgent>();
             _rigidbody = GetComponent<Rigidbody>();
-            _fov = GetComponentInChildren<FieldOfView>();
+            _fov = GetComponentInChildren<AreaDetector>();
             _animator = GetComponentInChildren<Animator>();
             _destinationCoroutine = Coroutine(false).WaitForSeconds(Random.Range(5, 10)).Invoke(SetRandomDestination);
         }
@@ -101,7 +102,7 @@ namespace Enemies.Goomba
 
         private void OnStayState(Action action)
         {
-            _player = _fov.VisibleTargets.FirstOrDefault();
+            _player = _fov.DetectedTargets.FirstOrDefault();
 
             var next = _player ? States.Chase : States.Patrol;
 

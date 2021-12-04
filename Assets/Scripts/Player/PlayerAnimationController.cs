@@ -19,6 +19,9 @@ namespace Player
         private static readonly int OnSecondPunch = Animator.StringToHash("OnSecondPunch");
         private static readonly int OnThirdPunch = Animator.StringToHash("OnThirdPunch");
         private static readonly int OnWallJump = Animator.StringToHash("OnWallJump");
+        private static readonly int OnHit = Animator.StringToHash("OnHit");
+        private static readonly int OnDie = Animator.StringToHash("OnDie");
+        private static readonly int Restart = Animator.StringToHash("OnRestart");
 
         [SerializeField] private RayCaster groundDetector;
         [SerializeField] [ReadOnly] private int jumpCounter;
@@ -37,14 +40,11 @@ namespace Player
             Messenger.Send<CharacterController>(controller => _controller = controller, gameObject);
             Messenger.Send<Animator>(animator => _animator = animator, gameObject);
             _maxSpeed = GameSettings.Instance.player.runningMovementSpeed;
-            _jumpCounterReset = Coroutine(destroyOnFinish: false).
-                WaitForSeconds(GameSettings.Instance.player.jumpComboResetTime).
-                Invoke(() => jumpCounter = 0);
-            _punchCounterReset = Coroutine(destroyOnFinish: false).
-                WaitForSeconds(GameSettings.Instance.player.punchComboResetTime).
-                Invoke(() => jumpCounter = 0);
-            _specialIdle = Coroutine(destroyOnFinish: false).
-                WaitForSeconds(10)
+            _jumpCounterReset = Coroutine(false).WaitForSeconds(GameSettings.Instance.player.jumpComboResetTime)
+                .Invoke(() => jumpCounter = 0);
+            _punchCounterReset = Coroutine(false).WaitForSeconds(GameSettings.Instance.player.punchComboResetTime)
+                .Invoke(() => jumpCounter = 0);
+            _specialIdle = Coroutine(false).WaitForSeconds(10)
                 .Invoke(() => _animator.SetTrigger(OnThirdPunch));
         }
 
@@ -65,6 +65,24 @@ namespace Player
             EventManager.StartListening("OnPlayerWallJump", OnPlayerWallJump);
             EventManager.StartListening("OnActionRun", OnActionRun);
             EventManager.StartListening("OnPlayerPunch", OnPlayerPunch);
+            EventManager.StartListening("OnPlayerHit", OnPlayerHit);
+            EventManager.StartListening("OnPlayerDie", OnPlayerDie);
+            EventManager.StartListening("OnRestart", OnRestart);
+        }
+
+        private void OnRestart(Message message)
+        {
+            _animator.SetTrigger(Restart);
+        }
+
+        private void OnPlayerDie(Message message)
+        {
+            _animator.SetTrigger(OnDie);
+        }
+
+        private void OnPlayerHit(Message message)
+        {
+            _animator.SetTrigger(OnHit);
         }
 
         private void OnPlayerPunch(Message message)

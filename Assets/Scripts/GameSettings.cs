@@ -8,7 +8,6 @@ using Utilities.Singleton;
 public class GameSettings : SingletonScriptableObject<GameSettings>
 {
     public PlayerSettings player;
-    public SerializableDictionary<string, Sound> sounds;
 
     [Serializable]
     public struct PlayerSettings
