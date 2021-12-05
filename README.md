@@ -4,7 +4,7 @@ Autors:
  - Raja Xuclà, Guillem
  - Ruiz Rabasseda, Alex
  
- Gameplay video: a?
+ Gameplay video: https://youtu.be/GqAkuxLR-UE
  
  ## Punts desenvolupats
  **CORE**
