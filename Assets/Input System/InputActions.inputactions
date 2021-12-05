@@ -59,6 +59,17 @@
                     "isPartOfComposite": false
                 },
                 {
+                    "name": "",
+                    "id": "66547aed-dcec-4aa0-8ea2-d26dde1c0624",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "InvertVector2(invertY=false)",
+                    "groups": "Gamepad",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
                     "name": "WASD",
                     "id": "462f436a-560d-4c52-80c2-964cab0702c4",
                     "path": "2DVector",
@@ -115,11 +126,33 @@
                 },
                 {
                     "name": "",
+                    "id": "2b7334e5-665e-4cfa-83a4-b93cf01b053d",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "95901927-764a-414a-97c0-08d910421a70",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard + Mouse",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a10bb4c2-3d28-4ffe-aa91-598ffd7d2f03",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -137,11 +170,33 @@
                 },
                 {
                     "name": "",
+                    "id": "6eb5f0e6-a72a-467c-a243-a972273cc487",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Run",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "7bf2eba8-0e8d-44da-a0cf-99ee0a8f1992",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard + Mouse",
+                    "action": "Punch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "11299c58-72df-4085-98d4-368579360b0d",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
                     "action": "Punch",
                     "isComposite": false,
                     "isPartOfComposite": false
