@@ -77,7 +77,7 @@ namespace Player
 
         private void OnPlayerDie(Message message)
         {
-            _animator.SetTrigger(OnDie);
+            //_animator.SetTrigger(OnDie);
         }
 
         private void OnPlayerHit(Message message)

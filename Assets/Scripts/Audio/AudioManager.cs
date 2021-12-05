@@ -41,7 +41,7 @@ namespace Audio
                     audioSource.maxDistance = sound.distance.max;
                     
                     audioSourceTransform.position = source.position;
-                    audioSourceTransform.parent = source;
+                    //audioSourceTransform.parent = source;
 
                     audioSource.Play();
                     _audioSources.Return(audioSource);

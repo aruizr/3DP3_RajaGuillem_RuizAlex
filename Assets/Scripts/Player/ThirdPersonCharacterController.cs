@@ -11,6 +11,8 @@ namespace Player
     {
         [SerializeField] private RayCaster wallDetector;
         [SerializeField] private RayCaster groundDetector;
+        [SerializeField] private RayCaster deadZoneDetector;
+        [SerializeField] private RayCaster checkpointDetector;
         private Transform _camera;
         private CharacterController _controller;
         private float _currentAngle;
@@ -52,6 +54,20 @@ namespace Player
 
         private void Update()
         {
+            if (checkpointDetector.IsColliding)
+            {
+                Debug.Log("detected checkpoint");
+                gameObject.GetComponentInParent<PlayerHealthSystem>().SetCheckpoint(gameObject.transform.position);
+            }
+            
+            if (deadZoneDetector.enabled && deadZoneDetector.IsColliding)
+            {
+                deadZoneDetector.isColliding = false;
+                deadZoneDetector.enabled = false;
+                gameObject.GetComponentInParent<PlayerHealthSystem>().TakeDamage(100f);
+                
+            }
+            
             if (_isPunching) return;
             _controller.Move(_velocity * Time.deltaTime);
         }
@@ -112,6 +128,8 @@ namespace Player
             EventManager.StartListening("OnActionRun", OnActionRun);
             EventManager.StartListening("OnActionJump", OnActionJump);
             EventManager.StartListening("OnActionPunch", OnActionPunch);
+            EventManager.StartListening("Respawn", OnRespawn);
+            
         }
 
         private void OnDisable()
@@ -120,6 +138,7 @@ namespace Player
             EventManager.StopListening("OnActionRun", OnActionRun);
             EventManager.StopListening("OnActionJump", OnActionJump);
             EventManager.StopListening("OnActionPunch", OnActionPunch);
+            EventManager.StopListening("Respawn", OnRespawn);
         }
 
         private void OnActionPunch(Message message)
@@ -143,6 +162,16 @@ namespace Player
         private void OnActionJump(Message message)
         {
             _isJumping = (bool) message["isJumping"];
+        }
+        
+        private void OnRespawn(Message message)
+        {
+            Invoke("EnableDeadDetector", 1.5f);
+        }
+
+        private void EnableDeadDetector()
+        {
+            deadZoneDetector.enabled = true;
         }
     }
 }

@@ -9,6 +9,7 @@ public class Coin : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Player")){
             EventManager.TriggerEvent("coin_collected", new Message(this));
+            gameObject.SetActive(false);
         }
     }
 }

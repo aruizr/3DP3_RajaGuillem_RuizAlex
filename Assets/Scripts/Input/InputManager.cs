@@ -43,5 +43,10 @@ namespace Input
         {
             EventManager.TriggerEvent("OnActionPunch", new Message(this));
         }
+        
+        private void OnRespawn(InputValue inputValue)
+        {
+            EventManager.TriggerEvent("OnRespawn", new Message(this));
+        }
     }
 }
