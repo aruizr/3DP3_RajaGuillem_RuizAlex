@@ -200,11 +200,33 @@
                 },
                 {
                     "name": "",
+                    "id": "211b51a5-8411-4d24-8bb6-7c73d9b6d402",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Punch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "12b7d900-0754-467f-b740-8f0e404d6a9c",
                     "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard + Mouse",
+                    "action": "Respawn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cb8fd7b4-2f66-4fc8-8095-e4cde68c4821",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
                     "action": "Respawn",
                     "isComposite": false,
                     "isPartOfComposite": false
