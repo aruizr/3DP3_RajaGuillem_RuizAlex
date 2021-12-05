@@ -24,6 +24,5 @@ Autors:
   - [x] Checkpoint
   - [x] Sound
   - [x] Better càmera
-  - [x] Sound
   - [x] Special Idle
   - [x] Gamepad
